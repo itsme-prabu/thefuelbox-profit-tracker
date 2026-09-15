@@ -24,7 +24,7 @@ type Ctx = {
   data: AppData;
   ready: boolean;
   updateSettings: (patch: Partial<Settings>) => void;
-  addClient: (name: string, phone?: string) => Client;
+  addClient: (name: string, phone?: string | undefined) => Client;
   updateClient: (id: string, patch: Partial<Client>) => void;
   deleteClient: (id: string) => void;
   addPayment: (p: Omit<Payment, "id">) => void;
@@ -74,11 +74,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setData((d) => ({ ...d, settings: { ...d.settings, ...patch } }));
   }, []);
 
-  const addClient = useCallback((name: string, phone?: string) => {
+  const addClient = useCallback((name: string, phone?: string | undefined) => {
     const client: Client = {
       id: uid(),
       name: name.trim(),
-      phone,
+      phone: phone ?? undefined,
       active: true,
       createdAt: new Date().toISOString().slice(0, 10),
     };

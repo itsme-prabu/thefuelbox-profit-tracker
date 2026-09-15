@@ -3,7 +3,7 @@ export type PaymentType = "day" | "week" | "month";
 export type Client = {
   id: string;
   name: string;
-  phone?: string;
+  phone?: string | undefined;
   active: boolean;
   createdAt: string;
 };
@@ -16,7 +16,7 @@ export type Payment = {
   boxes: number;
   amount: number;
   date: string; // yyyy-mm-dd
-  note?: string;
+  note?: string | undefined;
 };
 
 export type SpendingKind = "client" | "shop" | "overall";
@@ -24,12 +24,12 @@ export type SpendingKind = "client" | "shop" | "overall";
 export type Spending = {
   id: string;
   kind: SpendingKind;
-  clientId?: string;
-  shop?: string;
+  clientId?: string | undefined;
+  shop?: string | undefined;
   category: string;
   amount: number;
   date: string;
-  note?: string;
+  note?: string | undefined;
 };
 
 export type Settings = {
@@ -90,7 +90,7 @@ export function seedData(): AppData {
   clients.forEach((c, i) => {
     const count = 2 + (i % 3);
     for (let k = 0; k < count; k++) {
-      const paymentType = types[(i + k) % 3];
+      const paymentType = types[(i + k) % 3] as PaymentType;
       const duration = paymentType === "day" ? 1 : paymentType === "week" ? 7 : 30;
       const boxes = duration * (1 + ((i + k) % 3));
       payments.push({
@@ -112,7 +112,7 @@ export function seedData(): AppData {
       id: uid(),
       kind: "client" as const,
       clientId: c.id,
-      category: cats[i % cats.length],
+      category: cats[i % cats.length] as string,
       amount: 400 + i * 260,
       date: d(3 + i * 3),
       note: `Extra items for ${c.name.split(" ")[0]}`,
@@ -121,7 +121,7 @@ export function seedData(): AppData {
       id: uid(),
       kind: "shop" as const,
       shop: s,
-      category: cats[(i + 2) % cats.length],
+      category: cats[(i + 2) % cats.length] as string,
       amount: 1200 + i * 850,
       date: d(1 + i * 4),
       note: `Weekly purchase — ${s}`,
