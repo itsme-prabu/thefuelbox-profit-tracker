@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Plus, RotateCcw, X } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { useState } from "react";
-import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -29,7 +28,7 @@ export const Route = createFileRoute("/settings")({
 });
 
 function SettingsPage() {
-  const { data, updateSettings, resetSampleData } = useApp();
+  const { data, updateSettings } = useApp();
   const s = data.settings;
   const [newCategory, setNewCategory] = useState("");
   const [newShop, setNewShop] = useState("");
@@ -131,23 +130,6 @@ function SettingsPage() {
               <Plus className="size-4" /> Add
             </Button>
           </div>
-        </section>
-
-        <section className="rounded-2xl border border-border bg-card p-4">
-          <h2 className="mb-2 font-display text-base font-bold">Sample data</h2>
-          <p className="text-sm text-muted-foreground">
-            Restore the demo clients, payments and spending records.
-          </p>
-          <Button
-            variant="outline"
-            className="mt-4"
-            onClick={() => {
-              resetSampleData();
-              toast.success("Sample data restored");
-            }}
-          >
-            <RotateCcw className="size-4" /> Reset to sample data
-          </Button>
         </section>
       </div>
     </AppShell>

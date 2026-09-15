@@ -21,7 +21,7 @@ Build the Fuel Box Business Management web application:
   * Overall business report + Client-wise breakdown and comparison table (Boxes, Payments, Box Profit, Spending, Final Profit/Loss)
 - Search & filters: by client, shop, category, transaction type, date
 - Settings: Business Name, default Profit Per Box (₹40), Currency (INR ₹), Spending Categories, and Shop Accounts
-- Include clean sample data so all dashboards, calculations, and reports are immediately visible and testable
+- Start with an empty data state and calculate dashboards from entered records only
 
 This project was built with [Lovable](https://lovable.dev).
 

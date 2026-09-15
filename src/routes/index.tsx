@@ -165,6 +165,9 @@ function Dashboard() {
                   </span>
                 </li>
               ))}
+              {recent.length === 0 && (
+                <p className="py-3 text-sm text-muted-foreground">No transactions yet. Add a payment or spending record to begin.</p>
+              )}
             </ul>
           </section>
 
@@ -199,6 +202,9 @@ function Dashboard() {
                   </Badge>
                 </li>
               ))}
+              {ranked.length === 0 && (
+                <p className="py-3 text-sm text-muted-foreground">No clients yet. Add your first client.</p>
+              )}
             </ul>
           </section>
         </div>

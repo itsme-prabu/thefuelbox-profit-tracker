@@ -1,8 +1,20 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Plus, Search } from "lucide-react";
+import { Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { AppShell } from "@/components/AppShell";
+import { ClientDialog } from "@/components/ClientDialog";
 import { PaymentDialog } from "@/components/PaymentDialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,7 +40,7 @@ export const Route = createFileRoute("/clients/")({
 });
 
 function ClientsPage() {
-  const { data } = useApp();
+  const { data, deleteClient } = useApp();
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<"all" | "profit" | "loss">("all");
   const c = data.settings.currency;
@@ -82,13 +94,16 @@ function ClientsPage() {
 
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {list.map((s) => (
-            <Link
+            <article
               key={s.client.id}
-              to="/clients/$clientId"
-              params={{ clientId: s.client.id }}
               className="rounded-2xl border border-border bg-card p-4 transition-colors hover:border-primary"
             >
-              <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+              <Link
+                to="/clients/$clientId"
+                params={{ clientId: s.client.id }}
+                className="block"
+              >
+                <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
                 <div className="min-w-0">
                   <p className="truncate font-display text-base font-bold">{s.client.name}</p>
                   <p className="truncate text-xs text-muted-foreground">
@@ -101,21 +116,57 @@ function ClientsPage() {
                 >
                   {s.finalProfit >= 0 ? "Profitable" : "Loss"}
                 </Badge>
+                </div>
+                <dl className="mt-4 grid grid-cols-2 gap-3 text-xs">
+                  <Row label="Payments" value={formatMoney(s.payments, c)} />
+                  <Row label="Box profit" value={formatMoney(s.boxProfit, c)} />
+                  <Row label="Spending" value={formatMoney(s.totalSpending, c)} />
+                  <Row
+                    label="Final P/L"
+                    value={formatMoney(s.finalProfit, c)}
+                    tone={s.finalProfit >= 0 ? "success" : "destructive"}
+                  />
+                </dl>
+              </Link>
+              <div className="mt-4 flex justify-end gap-2 border-t border-border pt-3">
+                <ClientDialog editing={s.client}>
+                  <Button size="sm" variant="outline">
+                    <Pencil className="size-4" /> Edit
+                  </Button>
+                </ClientDialog>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive">
+                      <Trash2 className="size-4" /> Delete
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Remove client?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to remove this client? Their payments and client expenses will also be deleted permanently.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        onClick={() => deleteClient(s.client.id)}
+                      >
+                        Remove client
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
-              <dl className="mt-4 grid grid-cols-2 gap-3 text-xs">
-                <Row label="Payments" value={formatMoney(s.payments, c)} />
-                <Row label="Box profit" value={formatMoney(s.boxProfit, c)} />
-                <Row label="Spending" value={formatMoney(s.totalSpending, c)} />
-                <Row
-                  label="Final P/L"
-                  value={formatMoney(s.finalProfit, c)}
-                  tone={s.finalProfit >= 0 ? "success" : "destructive"}
-                />
-              </dl>
-            </Link>
+            </article>
           ))}
           {list.length === 0 && (
-            <p className="text-sm text-muted-foreground">No clients match your search.</p>
+            <p className="text-sm text-muted-foreground">
+              {data.clients.length === 0
+                ? "No clients yet. Add your first client."
+                : "No clients match your search."}
+            </p>
           )}
         </div>
       </div>

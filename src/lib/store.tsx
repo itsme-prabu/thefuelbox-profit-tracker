@@ -9,7 +9,6 @@ import {
 } from "react";
 import {
   DEFAULT_SETTINGS,
-  seedData,
   uid,
   type AppData,
   type Client,
@@ -18,7 +17,7 @@ import {
   type Spending,
 } from "./data";
 
-const KEY = "fuelbox.data.v1";
+const KEY = "fuelbox.data.v2";
 
 type Ctx = {
   data: AppData;
@@ -32,7 +31,6 @@ type Ctx = {
   addSpending: (s: Omit<Spending, "id">) => void;
   updateSpending: (id: string, patch: Partial<Spending>) => void;
   deleteSpending: (id: string) => void;
-  resetSampleData: () => void;
 };
 
 const AppContext = createContext<Ctx | null>(null);
@@ -53,10 +51,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
         const parsed = JSON.parse(raw) as AppData;
         setData({ ...seedEmpty(parsed) });
       } else {
-        setData(seedData());
+        setData(seedEmpty({}));
       }
     } catch {
-      setData(seedData());
+      setData(seedEmpty({}));
     }
     setReady(true);
   }, []);
@@ -116,7 +114,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
         })),
       deleteSpending: (id) =>
         setData((d) => ({ ...d, spendings: d.spendings.filter((s) => s.id !== id) })),
-      resetSampleData: () => setData(seedData()),
     }),
     [data, ready, updateSettings, addClient],
   );
